@@ -1,4 +1,4 @@
-Rail Gate Predictor — Prem Nagar Edition
+Rail Gate Predictor — My LC Edition
 ========================================
 
 A tiny web app that tells you if the railway gate is about to ruin your day.
@@ -111,5 +111,6 @@ pls don’t shout at RPF officers saying
 “ai said gate will open in 6 minutes!!!!!”
 
 i will deny everything. 😌
+
 
 
