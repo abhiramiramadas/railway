@@ -6,7 +6,7 @@
   <title>Rail Gate Predictor — Prem Nagar (Melaranoor)</title>
   <link rel="stylesheet" href="style.css"/>
 
-  <!-- FIXED Leaflet (NO integrity, NO crossorigin) -->
+  <!-- Leaflet (no integrity/crossorigin) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
@@ -15,16 +15,21 @@
   <header class="gov-header">
     <div class="gov-container">
       <h1>Rail Gate Predictor — Prem Nagar (Melaranoor)</h1>
-      <p class="subtitle">Predicts when the level crossing will close/open using live train positions (RailRadar).</p>
+      <p class="subtitle">Predicts when the level crossing will close/open using live train positions.</p>
     </div>
   </header>
 
   <main class="gov-container">
 
+    <!-- ⭐ GLOBAL GATE STATUS BANNER ⭐ -->
+    <div id="gateBanner" class="gate-banner">
+      Loading gate status...
+    </div>
+
     <section class="card">
       <h2>Crossing</h2>
       <p><strong>Prem Nagar / Melaranoor crossing</strong></p>
-      <p>Coordinates: <span id="crossingCoords">8.665971, 76.772719</span></p>
+      <p>Coordinates: <span id="crossingCoords">8.4855164921516, 76.9628715202519</span></p>
 
       <div class="row">
         <label>
@@ -46,7 +51,7 @@
       </div>
 
       <p class="muted">
-        Prediction assumes gates close when train is within ~5 km based on block signalling rules.
+        Prediction assumes Kerala suburban speeds and realistic gate timing (~6 min before train, ~8 min after train clears).
       </p>
     </section>
 
@@ -74,12 +79,10 @@
 
   <footer class="gov-footer">
     <div class="gov-container">
-      <small>This is a student project prototype. Not official railway data.</small>
+      <small>This is a student prototype. Not official railway data.</small>
     </div>
   </footer>
 
-  <!-- Your JS file -->
   <script src="script.js"></script>
-
 </body>
 </html>

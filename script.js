@@ -130,6 +130,43 @@ function clearTrainMarkers() {
   trainMarkers.forEach(m => map.removeLayer(m));
   trainMarkers = [];
 }
+function updateGateBanner(nearestTrain) {
+  const banner = document.getElementById("gateBanner");
+
+  if (!nearestTrain || !nearestTrain._prediction) {
+    banner.innerText = "No trains nearby";
+    banner.className = "gate-banner banner-open";
+    return;
+  }
+
+  const pred = nearestTrain._prediction;
+  const now = Date.now();
+
+  let statusText = "";
+  let cssClass = "";
+  let countdown = "";
+
+  if (now >= pred.gateCloseAt && now <= pred.gateOpenAt) {
+    // CLOSED
+    cssClass = "gate-banner banner-closed";
+    const mins = minutesBetween(pred.gateOpenAt);
+    statusText = `🔴 GATE CLOSED — Opens in ${mins} min`;
+  } 
+  else if (now < pred.gateCloseAt) {
+    // CLOSING SOON
+    cssClass = "gate-banner banner-soon";
+    const mins = minutesBetween(pred.gateCloseAt);
+    statusText = `🟡 GATE CLOSING SOON — Closes in ${mins} min`;
+  } 
+  else {
+    // OPEN
+    cssClass = "gate-banner banner-open";
+    statusText = `🟢 GATE OPEN`;
+  }
+
+  banner.innerHTML = statusText;
+  banner.className = cssClass;
+}
 
 function renderTrains(trains) {
   const list = document.getElementById("trainsList");
@@ -137,6 +174,8 @@ function renderTrains(trains) {
   clearTrainMarkers();
 
   trains.sort((a, b) => a._distance - b._distance);
+
+  const now = Date.now();
 
   trains.forEach(t => {
     const div = document.createElement("div");
@@ -149,14 +188,35 @@ function renderTrains(trains) {
       <small>${t.current_station_name || ""}</small>
     `;
 
+    const pred = t._prediction;
+    let status = "";
+    let countdown = "";
+
+    if (pred) {
+      if (now >= pred.gateCloseAt && now <= pred.gateOpenAt) {
+        status = `<span style="color:#d00000;font-weight:600;">🔴 CLOSED</span>`;
+        const mins = minutesBetween(pred.gateOpenAt);
+        countdown = `Opens in ${mins} min`;
+      }
+      else if (now < pred.gateCloseAt) {
+        status = `<span style="color:#d08a00;font-weight:600;">🟡 CLOSING SOON</span>`;
+        const mins = minutesBetween(pred.gateCloseAt);
+        countdown = `Closes in ${mins} min`;
+      }
+      else {
+        status = `<span style="color:#008d2f;font-weight:600;">🟢 OPEN</span>`;
+        countdown = `Opened ${Math.abs(minutesBetween(pred.gateOpenAt))} min ago`;
+      }
+    }
+
     const right = document.createElement("div");
     right.className = "train-right";
-
-    const pred = t._prediction;
 
     right.innerHTML = `
       <div class="badge">${t._distance.toFixed(2)} km</div>
       <div style="margin-top:6px;font-size:13px">
+        ${status}<br>
+        <small>${countdown}</small><br>
         Close: <strong>${pred ? formatTimeMs(pred.gateCloseAt) : "n/a"}</strong><br>
         Open: <strong>${pred ? formatTimeMs(pred.gateOpenAt) : "n/a"}</strong>
       </div>
@@ -173,6 +233,7 @@ function renderTrains(trains) {
     trainMarkers.push(marker);
   });
 }
+
 
 // MAIN refresh function
 async function refreshAll() {
@@ -197,7 +258,12 @@ async function refreshAll() {
     document.getElementById("mapStatus").innerText =
       `Found ${nearby.length} trains within ${radiusKm} km.`;
 
-    renderTrains(nearby);
+// update global gate banner based on the nearest train
+updateGateBanner(nearby[0]);
+
+// render list
+renderTrains(nearby);
+
 
   } catch (err) {
     document.getElementById("mapStatus").innerText = "❌ Error fetching live data.";
