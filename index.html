@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Rail Gate Predictor — Prem Nagar (Melaranoor)</title>
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- FIXED Leaflet (NO integrity, NO crossorigin) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+
+<body>
+  <header class="gov-header">
+    <div class="gov-container">
+      <h1>Rail Gate Predictor — Prem Nagar (Melaranoor)</h1>
+      <p class="subtitle">Predicts when the level crossing will close/open using live train positions (RailRadar).</p>
+    </div>
+  </header>
+
+  <main class="gov-container">
+
+    <section class="card">
+      <h2>Crossing</h2>
+      <p><strong>Prem Nagar / Melaranoor crossing</strong></p>
+      <p>Coordinates: <span id="crossingCoords">8.665971, 76.772719</span></p>
+
+      <div class="row">
+        <label>
+          Detection radius (km)
+          <input id="radius" type="number" step="1" value="20" />
+        </label>
+
+        <label>
+          Block distance (km)
+          <input id="blockDist" type="number" step="0.5" value="5" />
+        </label>
+
+        <label>
+          Auto-refresh (seconds)
+          <input id="refreshInterval" type="number" step="5" value="30" />
+        </label>
+
+        <button id="refreshBtn">Refresh now</button>
+      </div>
+
+      <p class="muted">
+        Prediction assumes gates close when train is within ~5 km based on block signalling rules.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Map — crossing & nearby trains</h2>
+      <div id="map" style="height:480px;border-radius:8px"></div>
+      <div id="mapStatus" class="status muted">Map loaded — fetching live trains...</div>
+    </section>
+
+    <section class="card">
+      <h2>Nearby trains (sorted by distance)</h2>
+      <div id="trainsList">Loading trains...</div>
+    </section>
+
+    <section class="card small">
+      <h3>Notes</h3>
+      <ul>
+        <li>Uses <code>/api/v1/trains/live-map</code> but MUST go through a proxy (CORS blocked).</li>
+        <li>If running locally, ensure <code>node proxy.js</code> is running.</li>
+        <li>If using Vercel, replace the proxy URL inside <code>script.js</code>.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="gov-footer">
+    <div class="gov-container">
+      <small>This is a student project prototype. Not official railway data.</small>
+    </div>
+  </footer>
+
+  <!-- Your JS file -->
+  <script src="script.js"></script>
+
+</body>
+</html>
