@@ -7,7 +7,8 @@ const CROSSING = {
 };
 
 // IMPORTANT: USE YOUR LOCAL PROXY
-const RAILRADAR_LIVE_MAP = "http://localhost:3000/live-map";
+const RAILRADAR_LIVE_MAP = "/api/live-map";
+
 
 let map, crossingMarker, trainMarkers = [];
 let refreshTimer = null;
