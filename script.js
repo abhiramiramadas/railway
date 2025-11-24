@@ -9,7 +9,6 @@ const CROSSING = {
 // IMPORTANT: USE YOUR LOCAL PROXY
 const RAILRADAR_LIVE_MAP = "/api/live-map";
 
-
 let map, crossingMarker, trainMarkers = [];
 let refreshTimer = null;
 
@@ -22,8 +21,8 @@ function haversineKm(lat1, lon1, lat2, lon2) {
   const dLon = toRad(lon2 - lon1);
 
   const a = Math.sin(dLat / 2) ** 2 +
-            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) ** 2;
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) ** 2;
 
   return R * 2 * Math.asin(Math.sqrt(a));
 }
@@ -91,10 +90,16 @@ function predictForTrain(train, blockDistKm) {
 }
 
 
-// Fetch with proxy — FIXED VERSION
+// Fetch with proxy — FINAL FIXED VERSION
 async function fetchLiveMap() {
   try {
-    const response = await fetch(RAILRADAR_LIVE_MAP);
+    const params = new URLSearchParams({
+      lat: CROSSING.lat,
+      lon: CROSSING.lng,
+      radius: document.getElementById("radius").value || 20
+    });
+
+    const response = await fetch(`${RAILRADAR_LIVE_MAP}?${params.toString()}`);
 
     const text = await response.text();
     let data;
@@ -106,13 +111,10 @@ async function fetchLiveMap() {
       throw new Error("Invalid JSON from proxy");
     }
 
-    // 🚨 NEW API FORMAT:
-    // If data = { success: true, data: [...], meta: {...} }
     if (data && Array.isArray(data.data)) {
-      return data.data; // return the actual train array
+      return data.data;
     }
 
-    // OLD API FORMAT (if RailRadar changes back)
     if (Array.isArray(data)) {
       return data;
     }
@@ -131,6 +133,7 @@ function clearTrainMarkers() {
   trainMarkers.forEach(m => map.removeLayer(m));
   trainMarkers = [];
 }
+
 function updateGateBanner(nearestTrain) {
   const banner = document.getElementById("gateBanner");
 
@@ -148,19 +151,16 @@ function updateGateBanner(nearestTrain) {
   let countdown = "";
 
   if (now >= pred.gateCloseAt && now <= pred.gateOpenAt) {
-    // CLOSED
     cssClass = "gate-banner banner-closed";
     const mins = minutesBetween(pred.gateOpenAt);
     statusText = `🔴 GATE CLOSED — Opens in ${mins} min`;
-  } 
+  }
   else if (now < pred.gateCloseAt) {
-    // CLOSING SOON
     cssClass = "gate-banner banner-soon";
     const mins = minutesBetween(pred.gateCloseAt);
     statusText = `🟡 GATE CLOSING SOON — Closes in ${mins} min`;
-  } 
+  }
   else {
-    // OPEN
     cssClass = "gate-banner banner-open";
     statusText = `🟢 GATE OPEN`;
   }
@@ -235,7 +235,6 @@ function renderTrains(trains) {
   });
 }
 
-
 // MAIN refresh function
 async function refreshAll() {
   const radiusKm = Number(document.getElementById("radius").value);
@@ -259,12 +258,8 @@ async function refreshAll() {
     document.getElementById("mapStatus").innerText =
       `Found ${nearby.length} trains within ${radiusKm} km.`;
 
-// update global gate banner based on the nearest train
-updateGateBanner(nearby[0]);
-
-// render list
-renderTrains(nearby);
-
+    updateGateBanner(nearby[0]);
+    renderTrains(nearby);
 
   } catch (err) {
     document.getElementById("mapStatus").innerText = "❌ Error fetching live data.";

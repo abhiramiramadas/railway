@@ -1,12 +1,13 @@
 export default async function handler(req, res) {
-  try {
-    const response = await fetch("https://railradar.in/api/v1/trains/live-map");
-    const text = await response.text();
+  const { lat, lon, radius } = req.query;
 
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Content-Type", "application/json");
-    res.status(200).send(text);
+  const url = `https://api.railradar.in/api/v1/trains/live-map?lat=${lat}&lon=${lon}&r=${radius}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    res.status(200).json(data);
   } catch (err) {
-    res.status(500).json({ error: "Proxy failed", detail: err.toString() });
+    res.status(500).json({ error: "Proxy failed", details: err.message });
   }
 }
