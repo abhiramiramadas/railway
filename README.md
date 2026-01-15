@@ -103,7 +103,16 @@ Notes
 *   if the gate opens early, that’s a miracle not a bug
     
 *   if it stays closed for 17 minutes straight… welcome to Kerala 🚧
-    
+  ---
+  ## 👩‍💻 Author
+
+**Abhirami Ramadas**
+
+B.Tech Information Technology
+
+LBS Institute of Technology for Women
+---
+
 💛Disclaimer
 ----------
 this is ✨not✨ official railway data
@@ -111,6 +120,7 @@ pls don’t shout at RPF officers saying
 “ai said gate will open in 6 minutes!!!!!”
 
 i will deny everything. 😌
+
 
 
 
